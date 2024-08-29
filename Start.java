@@ -2,10 +2,11 @@
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.ImageIcon;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
+import java.awt.Image;
 
 
 class Start{
@@ -25,18 +26,23 @@ class Window extends JFrame implements ActionListener{
     /////////////////
     JFrame frame;
     //buttons
-    JButton[] dealerButtons = new JButton[10];
-    JButton[] playerButtons = new JButton[10];
+    JButton[] dealerButtons = new JButton[13];
+    JButton[] playerButtons = new JButton[13];
     JButton go;
+    String[] faceValues = {"A","2","3","4","5","6","7","8","9","T","J","Q","K"};
+    String[] values = {"1","2","3","4","5","6","7","8","9","10","11","12","13"};
     //labels
     JLabel dealerCardLabel;
     JLabel dealerHeader;
-    JLabel player1;
-    JLabel player2;
+    JLabel playerCard1Label;
+    JLabel playerCard2Label;
     JLabel playerHeader;
     JLabel actionHeader;
-    // Blackjack class
+    // classes
     Blackjack game;
+    ImageIcon dealerImage;
+    ImageIcon playerImage1;
+    ImageIcon playerImage2;
     // text fonts
     Font font = new Font("Arial", Font.PLAIN, 24);
     //variables
@@ -72,14 +78,9 @@ class Window extends JFrame implements ActionListener{
 
     private void makeButtons(){
         //making dealer card buttons
-        dealerButtons[0] = new JButton("A");
-        dealerButtons[0].setBounds(30,130,40,40);
-        dealerButtons[0].addActionListener(this);
-        dealerButtons[0].setActionCommand("D1"); //each action command for dealer buttons start with D followed by the value
-        frame.add(dealerButtons[0]);
-        for (int i=1, j=30; i < dealerButtons.length; i++, j+=50){
-            dealerButtons[i] = new JButton(String.format("%d",i+1));
-            dealerButtons[i].setActionCommand(String.format("D%d", i+1)); // start with D then value
+        for (int i=0, j=30; i < dealerButtons.length; i++, j+=50){
+            dealerButtons[i] = new JButton(faceValues[i]);
+            dealerButtons[i].setActionCommand("D"+values[i]); // start with D then value
             dealerButtons[i].setBounds(j,130,40,40);
             dealerButtons[i].addActionListener(this);
             frame.add(dealerButtons[i]);
@@ -116,6 +117,13 @@ class Window extends JFrame implements ActionListener{
         dealerHeader.setFont(font);
         frame.add(dealerHeader);
 
+        dealerCardLabel = new JLabel();
+        dealerCardLabel.setBounds(220,30,60,87);
+        frame.add(dealerCardLabel);
+
+
+
+
 
         // player header
         playerHeader = new JLabel("Player Cards:");
@@ -133,6 +141,22 @@ class Window extends JFrame implements ActionListener{
     }
 
 
+    private ImageIcon getImageIcon(String value, String suit){
+        String URL = "PNG-cards/"+value+"_of_"+suit+".png";
+        ImageIcon originalIcon = new ImageIcon(URL);
+        Image originalImage = originalIcon.getImage();
+        Image resizedImage = originalImage.getScaledInstance(60, 87,4);
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+
+        return resizedIcon;
+    }
+    
+
+
+
+
+
+
 
 
 
@@ -141,6 +165,7 @@ class Window extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e){
         //takes the action command of the button pressed
         String input = e.getActionCommand();
+        //ImageIcon image;
 
 
 
@@ -158,27 +183,34 @@ class Window extends JFrame implements ActionListener{
             actionHeader.setText(text);
             return;
         }
+
+
         
         // if a dealer button is pressed
         else if (input.charAt(0) == 'D'){
             if (input.length() < 3){
                 dealerCard = Integer.parseInt(input.substring(1,2));
+                dealerImage = getImageIcon(input.substring(1,2), "diamonds");
+                
             }
             else {
                 dealerCard = 10;  
+                dealerImage = getImageIcon(input.substring(1, 3), "diamonds");
             }
             // if dealer card is an A will set header value to A (instead of 1)
-            if (dealerCard == 1){
-                dealerHeader.setText("Dealer Card:  A");
-            }
-            else{
-                dealerHeader.setText("Dealer Card:  "+dealerCard);
-            }
-            dealerCardPlaced = true;
+            // if (dealerCard == 1){
+            //     dealerHeader.setText("Dealer Card:  A");
+            //     dealerImage = getImageIcon('A', "diamonds");
+            // }
             
+            dealerHeader.setText("Dealer Card:  ");
+            dealerCardPlaced = true;
+            dealerCardLabel.setIcon(dealerImage);
             System.out.println("Dealer: "+dealerCard);
             return;
         }
+
+
 
         //if a player button is pressed
         else {
