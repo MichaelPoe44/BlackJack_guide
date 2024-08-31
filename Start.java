@@ -11,7 +11,6 @@ import java.awt.Image;
 
 class Start{
     public static void main(String[] args){
-        
         Window window = new Window();
     }
         
@@ -26,11 +25,11 @@ class Window extends JFrame implements ActionListener{
     /////////////////
     JFrame frame;
     //buttons
-    JButton[] dealerButtons = new JButton[13];
-    JButton[] playerButtons = new JButton[13];
+    JButton dealerCardButtons;
+    JButton playerButtons;
     JButton go;
-    String[] faceValues = {"A","2","3","4","5","6","7","8","9","T","J","Q","K"};
-    String[] values = {"1","2","3","4","5","6","7","8","9","10","11","12","13"};
+    final String[] faceValues = {"A","2","3","4","5","6","7","8","9","T","J","Q","K"};
+    final String[] values = {"1","2","3","4","5","6","7","8","9","10","11","12","13"};
     //labels
     JLabel dealerCardLabel;
     JLabel dealerHeader;
@@ -38,22 +37,23 @@ class Window extends JFrame implements ActionListener{
     JLabel playerCard2Label;
     JLabel playerHeader;
     JLabel actionHeader;
-    // classes
+    // BlackJack class
     Blackjack game;
-    ImageIcon dealerImage;
-    ImageIcon playerImage1;
-    ImageIcon playerImage2;
     // text fonts
-    Font font = new Font("Arial", Font.PLAIN, 24);
+    final Font font = new Font("Arial", Font.PLAIN, 24);
     //variables
     int dealerCard;
     int[] playerCards = new int[2];
     boolean playerCardOneReady = true;
-    boolean firstCardPlaced = false;
     boolean secondCardPlaced = false;
     boolean dealerCardPlaced = false;
-    String playerCard1;
-    String playerCard2;
+    ImageIcon dealerImage;
+    ImageIcon playerImage1;
+    ImageIcon playerImage2;
+    String suit = "clubs";
+    String dealerCardString;
+    String player1stCardString;
+    String player2ndCardString;
     ////////////////
 
     //constructor
@@ -78,27 +78,30 @@ class Window extends JFrame implements ActionListener{
 
     private void makeButtons(){
         //making dealer card buttons
-        for (int i=0, j=30; i < dealerButtons.length; i++, j+=50){
-            dealerButtons[i] = new JButton(faceValues[i]);
-            dealerButtons[i].setActionCommand("D"+values[i]); // start with D then value
-            dealerButtons[i].setBounds(j,130,40,40);
-            dealerButtons[i].addActionListener(this);
-            frame.add(dealerButtons[i]);
+        for (int i=0, j=30; i < 13; i++, j+=50){
+            dealerCardButtons = new JButton(faceValues[i]);
+            dealerCardButtons.setActionCommand("DC"+values[i]); // start with D then value
+            dealerCardButtons.setBounds(j,130,40,40);
+            dealerCardButtons.addActionListener(this);
+            frame.add(dealerCardButtons);
+        }
+        // makes dealer suit buttons
+        JButton dealerSuitButtons;
+        for (int i=0, j=40; i < 4; i++, j+=30){
+            dealerSuitButtons = new JButton(values[i]);
+            dealerSuitButtons.setActionCommand("DS"+values[i]);
+            dealerSuitButtons.setBounds(j,180,20,20);
+            dealerSuitButtons.addActionListener(this);
+            frame.add(dealerSuitButtons);
         }
         
-       //making player cards
-        playerButtons[0] = new JButton("A");
-        playerButtons[0].setBounds(30,480,40,40);
-        playerButtons[0].addActionListener(this);
-        playerButtons[0].setActionCommand("P1"); // all player buttons start with P then has the value
-        frame.add(playerButtons[0]);
-
-        for (int i=1, j=30; i < playerButtons.length; i++, j+=50){
-            playerButtons[i] = new JButton(String.format("%d",i+1));
-            playerButtons[i].setActionCommand(String.format("P%d", i+1)); // start with P then value
-            playerButtons[i].setBounds(j,480,40,40);
-            playerButtons[i].addActionListener(this);
-            frame.add(playerButtons[i]);
+       //making player buttons
+        for (int i=0, j=30; i < 13; i++, j+=50){
+            playerButtons = new JButton(faceValues[i]);
+            playerButtons.setActionCommand("PC"+values[i]); // start with P then value
+            playerButtons.setBounds(j,480,40,40);
+            playerButtons.addActionListener(this);
+            frame.add(playerButtons);
         }
 
         //making go button 
@@ -108,21 +111,18 @@ class Window extends JFrame implements ActionListener{
         frame.add(go);
     }
 
-    //makes lables 
-    
+    //makes lables
     private void makeLabels(){
         // dealer header
-        dealerHeader = new JLabel("Dealer Card:");
+        dealerHeader = new JLabel("Dealer Card:  ");
         dealerHeader.setBounds(30,50,200,90);
         dealerHeader.setFont(font);
         frame.add(dealerHeader);
-
+        
+        //dealer card label
         dealerCardLabel = new JLabel();
         dealerCardLabel.setBounds(220,30,60,87);
         frame.add(dealerCardLabel);
-
-
-
 
 
         // player header
@@ -130,6 +130,17 @@ class Window extends JFrame implements ActionListener{
         playerHeader.setBounds(30,400,250,90);
         playerHeader.setFont(font);
         frame.add(playerHeader);
+
+        //player 1st card label
+        playerCard1Label = new JLabel();
+        playerCard1Label.setBounds(220,380,60,87);
+        frame.add(playerCard1Label);
+
+        //player 2nd card label
+        playerCard2Label = new JLabel();
+        playerCard2Label.setBounds(300,380,60,87);
+        frame.add(playerCard2Label);
+
 
         //Action header
         actionHeader = new JLabel();
@@ -151,10 +162,6 @@ class Window extends JFrame implements ActionListener{
         return resizedIcon;
     }
     
-
-
-
-
 
 
 
@@ -188,23 +195,30 @@ class Window extends JFrame implements ActionListener{
         
         // if a dealer button is pressed
         else if (input.charAt(0) == 'D'){
-            if (input.length() < 3){
-                dealerCard = Integer.parseInt(input.substring(1,2));
-                dealerImage = getImageIcon(input.substring(1,2), "diamonds");
-                
+            // if a card button is pressed
+            if (input.charAt(1) == 'C'){
+                if (input.length() < 4){
+                    dealerCardString = input.substring(2,3);
+                    dealerCard = Integer.parseInt(input.substring(2,3)); 
+                }  
+
+                else {
+                    dealerCardString = input.substring(2, 4);
+                    dealerCard = 10;  
+                }
             }
+            // if a suit button is pressed
             else {
-                dealerCard = 10;  
-                dealerImage = getImageIcon(input.substring(1, 3), "diamonds");
+                int x = Integer.parseInt(input.substring(2, 3));
+                if (x == 1) suit = "clubs";
+                else if (x == 2) suit = "diamonds";
+                else if (x == 3) suit = "hearts";
+                else if (x == 4) suit = "spades";
             }
-            // if dealer card is an A will set header value to A (instead of 1)
-            // if (dealerCard == 1){
-            //     dealerHeader.setText("Dealer Card:  A");
-            //     dealerImage = getImageIcon('A', "diamonds");
-            // }
             
-            dealerHeader.setText("Dealer Card:  ");
             dealerCardPlaced = true;
+
+            dealerImage = getImageIcon(dealerCardString, suit);
             dealerCardLabel.setIcon(dealerImage);
             System.out.println("Dealer: "+dealerCard);
             return;
@@ -216,41 +230,37 @@ class Window extends JFrame implements ActionListener{
         else {
             
             if (playerCardOneReady){
-                if (input.length() < 3){
-                    playerCards[0] = Integer.parseInt(input.substring(1, 2));
+                if (input.length() < 4){
+                    playerCards[0] = Integer.parseInt(input.substring(2, 3));
+                    player1stCardString = input.substring(2,3);
                 }
                 else {
                     playerCards[0] = 10;
+                    player1stCardString = input.substring(2,4);
                 }
+
                 playerCardOneReady = false;
-                
-                if (playerCards[0] == 1) playerCard1 = "A";
-                else playerCard1 = String.valueOf(playerCards[0]);
+                playerImage1 = getImageIcon(player1stCardString,"clubs");
+                playerCard1Label.setIcon(playerImage1);
             }
+
             else {
-                if (input.length() < 3){
-                    playerCards[1] = Integer.parseInt(input.substring(1, 2));
+                if (input.length() < 4){
+                    playerCards[1] = Integer.parseInt(input.substring(2, 3));
+                    player2ndCardString = input.substring(2,3);
                 }
                 else {
                     playerCards[1] = 10;
+                    player2ndCardString = input.substring(2,4);
                 }
+
                 playerCardOneReady = true;
-                if (playerCards[1] == 1) playerCard2 = "A";
-                else playerCard2 = String.valueOf(playerCards[1]);
+                playerImage2 = getImageIcon(player2ndCardString, "clubs");
+                playerCard2Label.setIcon(playerImage2);
                 secondCardPlaced = true;
             }
 
 
-            if (!firstCardPlaced){
-                playerHeader.setText("Player Cards: "+playerCard1);
-                firstCardPlaced = true;
-            }
-            else {
-                playerHeader.setText("Player Cards: "+playerCard1+", "+playerCard2);
-            }
-            
-            System.out.println("Player: "+playerCards[0]+", "+playerCards[1]);
-            return;
         }
     }
 
