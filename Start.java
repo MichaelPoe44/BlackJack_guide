@@ -100,7 +100,7 @@ class Window extends JFrame implements ActionListener{
         }
         
        //making player buttons
-        for (int i=1, y=430; i<3; i++, y+=80){
+        for (int i=1, y=450; i<3; i++, y+=120){
             for (int j=0, x=30; j<13; j++, x+=50){
                 playerButtons = new JButton(faceValues[j]);
                 playerButtons.setActionCommand("P"+String.valueOf(i)+"C"+values[j]); // start with P, then number indecator
@@ -110,7 +110,7 @@ class Window extends JFrame implements ActionListener{
             }
         }
         JButton playerSuitButtons;
-        for (int i=1, y=480; i<3; i++, y+=80){
+        for (int i=1, y=500; i<3; i++, y+=120){
             for (int j=0, x=40; j<4; j++, x+=30){  
                 ImageIcon suitImage = getImageIcon("0", suits[j],20,29);
                 playerSuitButtons = new JButton(suitImage);
@@ -123,7 +123,7 @@ class Window extends JFrame implements ActionListener{
 
         //making go button 
         go = new JButton("Go");
-        go.setBounds(30,265,60,60);
+        go.setBounds(30,240,60,60);
         go.addActionListener(this);
         frame.add(go);
     }
@@ -150,18 +150,25 @@ class Window extends JFrame implements ActionListener{
 
         //player 1st card label
         playerCard1Label = new JLabel();
-        playerCard1Label.setBounds(220,330,60,87);
+        playerCard1Label.setBounds(220,350,60,87);
         frame.add(playerCard1Label);
 
         //player 2nd card label
         playerCard2Label = new JLabel();
-        playerCard2Label.setBounds(300,330,60,87);
+        playerCard2Label.setBounds(300,350,60,87);
         frame.add(playerCard2Label);
 
+        JLabel firstCard = new JLabel("1st Card");
+        firstCard.setBounds(50,420,60,30);
+        frame.add(firstCard);
+
+        JLabel secondCard = new JLabel("2nd Card");
+        secondCard.setBounds(50,540,60,30);
+        frame.add(secondCard);
 
         //Action header
         actionHeader = new JLabel();
-        actionHeader.setBounds(150,255,500,90);
+        actionHeader.setBounds(150,230,500,90);
         actionHeader.setFont(font);
         frame.add(actionHeader);
 
