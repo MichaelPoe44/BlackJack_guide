@@ -1,4 +1,1 @@
-Run the start class to start.
-
-Can choose the card and suit and has a image to coorespond with each combination.
-Suits will be clubs by default and have no effect on the outcome.
+A java program that has a UI interface to pick card values for dealer and Player that will give the best option for the player to make in that scenario
